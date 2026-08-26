@@ -1,0 +1,5 @@
+---
+- import_playbook: playbooks/mgmt_server.yml
+- import_playbook: playbooks/kvm.yml
+- import_playbook: playbooks/nfs.yml
+#- import_playbook: playbooks/ceph.yml

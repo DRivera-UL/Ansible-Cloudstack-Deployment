@@ -1,0 +1,44 @@
+---
+- name: Install Apache management server
+  ansible.builtin.apt:
+     name:
+       - nfs-kernel-server
+       - quota
+     state: present
+     update_cache: yes
+     cache_valid_time: 3600
+
+- name: Copy the export properties file over
+  ansible.builtin.copy:
+    src: exports
+    dest: /etc/
+  notify: Restart NFS
+
+- name: Copy the NFS kernel server file over
+  ansible.builtin.copy:
+    src: nfs-kernel-server
+    dest: /etc/default  
+  notify: Restart NFS
+
+- name: Copy the NFS common file over
+  ansible.builtin.copy:
+    src: nfs-common
+    dest: /etc/default  
+  notify: Restart NFS
+
+- name: Copy the quota file over
+  ansible.builtin.copy:
+    src: quota
+    dest: /etc/default  
+  notify: Restart NFS
+
+- name: Create NFS export directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - /export/primary
+    - /export/secondary

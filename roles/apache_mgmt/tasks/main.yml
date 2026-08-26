@@ -1,0 +1,56 @@
+---
+- name: Install Apache management server
+  ansible.builtin.apt:
+     name:
+       - cloudstack-management
+       - mysql-server
+     state: present
+     update_cache: yes
+     cache_valid_time: 3600
+
+- name: Copy the MySQL config file over
+  ansible.builtin.copy:
+    src: mysqld.cnf
+    dest: /etc/mysql/mysql.conf.d/
+  register: mysql_config_file
+
+- name: Restart MySQL server
+  ansible.builtin.systemd_service:
+    name: mysql
+    enabled: true
+    state: restarted
+    daemon_reload: true
+  when: mysql_config_file.changed
+
+- name: Check if Cloudstack's database has already been made #Checks the database for MySQL to print 0 (the empty database ShapeBlue sends out.)
+  ansible.builtin.command:
+    cmd: mysql -N -B -e "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name='cloud';"
+  register: cloudstack_database
+  changed_when: false
+
+- name: Initialize CloudStack database
+  ansible.builtin.command:
+    cmd: |
+      cloudstack-setup-databases cloud:{{ cloud_db_password }}@localhost
+      --deploy-as=root: -i {{ groups['cloudstack_mgmt'][0] }}
+  when: cloudstack_database.stdout | int == 0
+  no_log: true
+
+- name: Check if management server is configured
+  ansible.builtin.stat:
+    path: /etc/cloudstack/management/log4j2.xml
+  register: cloudstack_management_started
+
+- name: Start CloudStack management server script
+  ansible.builtin.command:
+    cmd: cloudstack-setup-management
+    creates: /etc/cloudstack/management/log4j2.xml
+  when: not cloudstack_management_started.stat.exists
+
+- name: Enable and start CloudStack management
+  ansible.builtin.systemd_service:
+    name: cloudstack-management
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true

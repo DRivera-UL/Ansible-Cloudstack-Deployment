@@ -1,0 +1,10 @@
+---
+- name: Initialize Cloudstack Management Server
+  hosts: kvm_host
+  roles:
+    - role: ./roles/common
+      become: true
+    - role: ./roles/repo_init
+      become: true
+    - role: ./roles/kvm_init
+      become: true

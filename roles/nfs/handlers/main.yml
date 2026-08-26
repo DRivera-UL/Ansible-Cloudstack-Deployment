@@ -1,0 +1,14 @@
+- name: Reload NFS exports
+  ansible.builtin.command:
+    cmd: exportfs -a
+  become: true
+
+- name: Restart NFS
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: true
+  loop:
+    - nfs-kernel-server
+    - quota
+  become: true

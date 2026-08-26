@@ -1,0 +1,66 @@
+---
+- name: Install KVM and Cloudstack agent
+  ansible.builtin.apt:
+     name:
+       - "{{ qemu_package }}"
+       - cloudstack-agent
+     state: present
+     update_cache: yes
+     cache_valid_time: 3600
+  vars:
+    qemu_package: "{{ 'qemu-system-arm' if ansible_architecture == 'aarch64' else 'qemu-system-x86' }}"
+
+- name: Enable the console proxy on QEMU
+  ansible.builtin.copy:
+    src: qemu.conf
+    dest: /etc/libvirt/
+
+- name: Mask the socket-based listeners  
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    masked: true
+    state: stopped
+    enabled: false
+  loop:
+    - libvirtd.socket
+    - libvirtd-ro.socket
+    - libvirtd-admin.socket
+    - libvirtd-tls.socket
+    - libvirtd-tcp.socket
+  become: true
+  notify: Restart libvirt
+
+- name: Configures plain TCP for libvirt (Cloudstack corrects once host is added)
+  ansible.builtin.copy:
+    src: libvirtd.conf
+    dest: /etc/libvirt/
+  notify: Restart libvirt
+
+- name: Disable AppArmor profiles for libvirt
+  ansible.builtin.file:
+    src: "/etc/apparmor.d/{{ item }}"
+    dest: "/etc/apparmor.d/disable/{{ item }}"
+    state: link
+  loop:
+    - usr.sbin.libvirtd
+    - usr.lib.libvirt.virt-aa-helper
+  notify: Reload apparmor
+
+- name: Check for netplan
+  ansible.builtin.stat:
+    path: /etc/netplan/01-netcfg.yaml
+  register: netplan_file
+
+- name: Deploy netplan bridge config
+  ansible.builtin.template:
+    src: 01-netcfg.yaml.j2
+    dest: /etc/netplan/01-netcfg.yaml
+    mode: '0600'
+  when: not netplan_file.stat.exists
+  notify: Apply netplan
+
+- name: Disable cloud-init netplan config
+  ansible.builtin.file:
+    path: /etc/netplan/50-cloud-init.yaml
+    state: absent
+  become: true

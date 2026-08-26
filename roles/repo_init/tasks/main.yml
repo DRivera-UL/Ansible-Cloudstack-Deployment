@@ -1,0 +1,20 @@
+---
+- name: Validate the directory for keyrings
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root # Default on normal installs
+    group: root # Default on normal installs
+    mode: '0775' # Default on normal installs
+
+- name: Add ShapeBlue's Cloudstack key
+  ansible.builtin.get_url:
+    url: http://packages.shapeblue.com/release.asc
+    dest: /etc/apt/keyrings/cloudstack.asc
+    mode: '0644'
+
+- name: Add ShapeBlue's CloudStack repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/cloudstack.asc] http://packages.shapeblue.com/cloudstack/upstream/debian/4.22 /"
+    filename: cloudstack
+    state: present

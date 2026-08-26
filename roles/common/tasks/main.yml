@@ -1,0 +1,53 @@
+---
+- name: Disable unattended upgrades
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop:
+    - unattended-upgrades.service
+    - apt-daily.timer
+    - apt-daily-upgrade.timer
+  failed_when: false
+
+- name: Wait for dpkg lock
+  ansible.builtin.shell: |
+    while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 5; done
+  changed_when: false
+
+- name: Allow firewall ports (TCP)
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - '22' # SSH
+    - '111' # rpcbind
+    - '662' # statd
+    - '875' # rquotad
+    - '892' # mountd
+    - '1798' # agent health check
+    - '2049' # NFS
+    - '8080' # cloudstack UI/API
+    - '8250' # cloudstack agents
+    - '9090' # cluster management
+    - '16509' # libvirt TCP
+    - '16514' # libvirt TLS
+    - '32803' # lockd
+    - '5900:6100' # VNC
+    - '49152:49216' # migration between KVM
+  become: true
+
+- name: Allow firewall ports (UDP)
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: udp
+  loop:
+    - '111' # rpcbind
+    - '32769' # lockd
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
+  become: true

@@ -1,0 +1,5 @@
+---
+ansible_password: "changeme"
+ansible_become_pass: "changeme"
+mysql_root_password: "changeme"
+cloud_db_password: "changeme"

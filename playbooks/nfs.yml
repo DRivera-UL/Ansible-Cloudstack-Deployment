@@ -1,0 +1,8 @@
+---
+- name: Initialize Cloudstack Management Server
+  hosts: nfs_server
+  roles:
+    - role: ./roles/common
+      become: true
+    - role: ./roles/nfs
+      become: true

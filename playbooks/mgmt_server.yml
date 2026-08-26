@@ -1,0 +1,10 @@
+---
+- name: Initialize Cloudstack Management Server
+  hosts: cloudstack_mgmt
+  roles:
+    - role: ./roles/common
+      become: true
+    - role: ./roles/repo_init
+      become: true
+    - role: ./roles/apache_mgmt
+      become: true
