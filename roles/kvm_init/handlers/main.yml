@@ -4,6 +4,11 @@
     state: restarted
     enabled: true
 
+- name: Restart cloudstack-agent
+  ansible.builtin.systemd_service:
+    name: cloudstack-agent
+    state: restarted
+
 - name: Reload apparmor
   ansible.builtin.command:
     cmd: "apparmor_parser -R /etc/apparmor.d/{{ item }}"

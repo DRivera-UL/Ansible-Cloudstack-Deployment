@@ -10,6 +10,16 @@
   vars:
     qemu_package: "{{ 'qemu-system-arm' if ansible_architecture == 'aarch64' else 'qemu-system-x86' }}"
 
+- name: Prepare ARM hosts for virtualizing if ARM is in KVM cluster
+  ansible.builtin.blockinfile:
+    path: /etc/cloudstack/agent/agent.properties
+    marker: "# {mark} arm64 cpu"
+    block: |
+      guest.cpu.arch=aarch64
+      guest.cpu.mode=host-passthrough
+  when: ansible_facts['architecture'] == 'aarch64'
+  notify: Restart cloudstack-agent
+
 - name: Enable the console proxy on QEMU
   ansible.builtin.copy:
     src: qemu.conf
