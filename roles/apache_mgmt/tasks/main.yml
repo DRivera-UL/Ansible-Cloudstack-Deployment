@@ -9,19 +9,19 @@
      update_cache: yes
      cache_valid_time: 3600
 
-- name: Copy the MySQL config file over
-  ansible.builtin.copy:
-    src: mysqld.cnf
-    dest: /etc/mysql/mysql.conf.d/
-  register: mysql_config_file
-
-- name: Restart MySQL server
-  ansible.builtin.systemd_service:
-    name: mysql
-    enabled: true
-    state: restarted
-    daemon_reload: true
-  when: mysql_config_file.changed
+- name: Prepare ARM hosts for virtualizing if ARM is in KVM cluster
+  ansible.builtin.blockinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    marker: "# {mark} arm64 cpu"
+    block: |
+      server_id = 1
+      sql-mode="STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,ERROR_FOR_DIVISION_BY_ZERO,NO_ZERO_DATE,NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION"
+      innodb_rollback_on_timeout=1
+      innodb_lock_wait_timeout=600
+      max_connections=1000
+      log-bin=mysql-bin
+      binlog-format = 'ROW'
+  notify: Restart MySQL server
 
 - name: Check if Cloudstack's database has already been made #Checks the database for MySQL to print 0 (the empty database ShapeBlue sends out.)
   ansible.builtin.command:

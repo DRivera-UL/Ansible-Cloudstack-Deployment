@@ -11,19 +11,23 @@
     qemu_package: "{{ 'qemu-system-arm' if ansible_architecture == 'aarch64' else 'qemu-system-x86' }}"
 
 - name: Prepare ARM hosts for virtualizing if ARM is in KVM cluster
-  ansible.builtin.blockinfile:
+  ansible.builtin.lineinfile:
     path: /etc/cloudstack/agent/agent.properties
-    marker: "# {mark} arm64 cpu"
-    block: |
-      guest.cpu.arch=aarch64
-      guest.cpu.mode=host-passthrough
+    regexp: '^{{ item.key | regex_escape }}='
+    line: "{{ item.key }}={{ item.value }}"
+  loop:
+    - { key: guest.cpu.arch, value: aarch64 }
+    - { key: guest.cpu.mode, value: host-passthrough }
   when: ansible_facts['architecture'] == 'aarch64'
   notify: Restart cloudstack-agent
 
-- name: Enable the console proxy on QEMU
-  ansible.builtin.copy:
-    src: qemu.conf
-    dest: /etc/libvirt/
+- name: Enable the console proxy on QEMU 
+  ansible.builtin.blockinfile:
+    path: /etc/libvirt/qemu.conf
+    marker: "# {mark} VNC permissive listen"
+    block: |
+      vnc_listen = "0.0.0.0"
+  notify: Restart libvirt
 
 - name: Mask the socket-based listeners  
   ansible.builtin.systemd_service:
@@ -41,9 +45,15 @@
   notify: Restart libvirt
 
 - name: Configures plain TCP for libvirt (Cloudstack corrects once host is added)
-  ansible.builtin.copy:
-    src: libvirtd.conf
-    dest: /etc/libvirt/
+  ansible.builtin.blockinfile:
+    path: /etc/libvirt/libvirtd.conf
+    marker: "# {mark} Plain TCP"
+    block: |
+      listen_tls=0
+      listen_tcp=1
+      tcp_port = "16509"
+      mdns_adv = 0
+      auth_tcp = "none"
   notify: Restart libvirt
 
 - name: Disable AppArmor profiles for libvirt
@@ -73,4 +83,12 @@
   ansible.builtin.file:
     path: /etc/netplan/50-cloud-init.yaml
     state: absent
+  become: true
+
+- name: Ensure CloudStack agent is started
+  ansible.builtin.systemd_service:
+    name: cloudstack-agent
+    state: started
+    enabled: true
+    daemon_reload: true
   become: true

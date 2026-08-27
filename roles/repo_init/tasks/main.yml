@@ -11,7 +11,7 @@
   ansible.builtin.get_url:
     url: http://packages.shapeblue.com/release.asc
     dest: /etc/apt/keyrings/cloudstack.asc
-    mode: '0644'
+#    mode: '0644'
 
 - name: Add ShapeBlue's CloudStack repository
   ansible.builtin.apt_repository:

@@ -8,28 +8,34 @@
      update_cache: yes
      cache_valid_time: 3600
 
-- name: Copy the export properties file over
-  ansible.builtin.copy:
-    src: exports
-    dest: /etc/
+- name: Configure NFS export properties
+  ansible.builtin.blockinfile:
+    path: /etc/exports
+    marker: "# {mark} Configuration for NFS Exports"
+    block: /export  *(rw,async,no_root_squash,no_subtree_check)
+  notify: Restart NFS
+  
+- name: Configure NFS kernel server
+  ansible.builtin.blockinfile:
+    path: /etc/default/nfs-kernel-server
+    marker: "# {mark} Configuration for NFS kernel server"
+    block: RPCMOUNTDOPTS="-p 892 --manage-gids"
   notify: Restart NFS
 
-- name: Copy the NFS kernel server file over
-  ansible.builtin.copy:
-    src: nfs-kernel-server
-    dest: /etc/default  
+- name: Configure NFS Common
+  ansible.builtin.blockinfile:
+    path: /etc/default/nfs-common
+    marker: "# {mark} Configuration for NFS common"
+    block: |
+      STATDOPTS="--port 662 --outgoing-port 2020"
+      NEED_STATD=yes
   notify: Restart NFS
 
-- name: Copy the NFS common file over
-  ansible.builtin.copy:
-    src: nfs-common
-    dest: /etc/default  
-  notify: Restart NFS
-
-- name: Copy the quota file over
-  ansible.builtin.copy:
-    src: quota
-    dest: /etc/default  
+- name: Configure the quota file
+  ansible.builtin.blockinfile:
+    path: /etc/default/quota
+    marker: "# {mark} Configuration for quota file"
+    block: RPCRQUOTADOPTS="-p 875"
   notify: Restart NFS
 
 - name: Create NFS export directories
