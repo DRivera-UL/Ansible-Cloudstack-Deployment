@@ -1,5 +1,5 @@
 ---
-- name: Install Apache management server
+- name: Install NFS server
   ansible.builtin.apt:
      name:
        - nfs-kernel-server
