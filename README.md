@@ -77,6 +77,10 @@ Modify the inventory file
 
 `vim inventory/inventory.yml`
 
+Modify the ansible user in ansible.cfg
+
+`vim ansible.cfg`
+
 Install nessecary collections
 
 `ansible-galaxy collection install -r requirements.yml`
