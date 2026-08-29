@@ -1,1 +1,5 @@
 .claude
+*.swp
+*.bak
+inventory/group_vars/all/vault.yml
+inventory/inventory.yml
