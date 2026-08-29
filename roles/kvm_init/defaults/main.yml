@@ -1,0 +1,7 @@
+---
+cloudstack_agent_ssh_user: "{{ ansible_user | default(ansible_env.SUDO_USER) }}"
+
+cloudstack_agent_setup_commands:
+  - /usr/bin/cloudstack-setup-agent
+  - /usr/share/cloudstack-common/scripts/util/keystore-setup
+  - /usr/share/cloudstack-common/scripts/util/keystore-cert-import

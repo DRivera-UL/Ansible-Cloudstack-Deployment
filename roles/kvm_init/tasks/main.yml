@@ -10,6 +10,15 @@
   vars:
     qemu_package: "{{ 'qemu-system-arm' if ansible_architecture == 'aarch64' else 'qemu-system-x86' }}"
 
+- name: Allow the Ansible user to run the CloudStack agent setup
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/99-cloudstack-setup-agent
+    content: "{{ cloudstack_agent_ssh_user }} ALL=NOPASSWD: {{ cloudstack_agent_setup_commands | join(', ') }}\n"
+    owner: root
+    group: root
+    mode: '0440'
+    validate: /usr/sbin/visudo -cf %s
+
 - name: Prepare ARM hosts for virtualizing if ARM is in KVM cluster
   ansible.builtin.lineinfile:
     path: /etc/cloudstack/agent/agent.properties
