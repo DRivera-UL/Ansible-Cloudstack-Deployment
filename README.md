@@ -15,45 +15,50 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
 ### Repo Layout
 ```
 .
-├── ansible.cfg  
-├── inventory  
-│   ├── group_vars  
-│   │   └── all  
-│   │       └── vault.yml.example  
-│   └── inventory.yml  
-├── LICENSE  
-├── main.yml  
-├── playbooks  
-│   ├── ceph.yml  
-│   ├── kvm.yml  
-│   ├── mgmt_server.yml  
-│   └── nfs.yml  
-├── README.md  
-├── requirements.yml  
-└── roles  
-   ├── apache_mgmt  
-   │   ├── handlers  
-   │   │   └── main.yml  
-   │   └── tasks  
-   │       └── main.yml  
-   ├── common  
-   │   └── tasks  
-   │       └── main.yml  
-   ├── kvm_init  
-   │   ├── handlers  
-   │   │   └── main.yml  
-   │   ├── tasks  
-   │   │   └── main.yml  
-   │   └── templates  
-   │       └── 01-netcfg.yaml.j2  
-   ├── nfs  
-   │   ├── handlers  
-   │   │   └── main.yml  
-   │   └── tasks  
-   │       └── main.yml  
-   └── repo_init  
-       └── tasks  
-           └── main.yml
+├── ansible.cfg
+├── docs
+│   └── assets
+│       └── cloudstack.svg
+├── inventory
+│   ├── group_vars
+│   │   └── all
+│   │       └── vault.yml
+│   └── inventory.yml
+├── LICENSE
+├── main.yml
+├── playbooks
+│   ├── ceph.yml
+│   ├── kvm.yml
+│   ├── mgmt_server.yml
+│   └── nfs.yml
+├── README.md
+├── requirements.yml
+└── roles
+    ├── apache_mgmt
+    │   ├── handlers
+    │   │   └── main.yml
+    │   └── tasks
+    │       └── main.yml
+    ├── common
+    │   └── tasks
+    │       └── main.yml
+    ├── kvm_init
+    │   ├── defaults
+    │   │   └── main.yml
+    │   ├── handlers
+    │   │   └── main.yml
+    │   ├── tasks
+    │   │   └── main.yml
+    │   └── templates
+    │       └── 01-netcfg.yaml.j2
+    ├── nfs
+    │   ├── handlers
+    │   │   └── main.yml
+    │   └── tasks
+    │       └── main.yml
+    └── repo_init
+        └── tasks
+            └── main.yml
 ```
 ### Instructions
 
