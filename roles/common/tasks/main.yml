@@ -36,7 +36,7 @@
     - '32803' # lockd
     - '5900:6100' # VNC
     - '49152:49216' # migration between KVM
-  become: true
+  notify: Reload UFW
 
 - name: Allow firewall ports (UDP)
   community.general.ufw:
@@ -46,6 +46,27 @@
   loop:
     - '111' # rpcbind
     - '32769' # lockd
+  notify: Reload UFW
+
+- name: Set UFW default deny incoming
+  community.general.ufw:
+    direction: incoming
+    policy: deny
+  notify: Reload UFW
+
+- name: Set UFW default allow outgoing
+  community.general.ufw:
+    direction: outgoing
+    policy: allow
+  notify: Reload UFW
+
+- name: Allow forwarded traffic so bridged guest and system VMs can reach the network
+  ansible.builtin.lineinfile:
+    path: /etc/default/ufw
+    regexp: '^DEFAULT_FORWARD_POLICY='
+    line: 'DEFAULT_FORWARD_POLICY="ACCEPT"'
+  become: true
+  notify: Reload UFW
 
 - name: Enable UFW
   community.general.ufw:
