@@ -77,13 +77,29 @@
     dest: /etc/netplan/01-netcfg.yaml
     mode: '0600'
   when: not netplan_file.stat.exists
-  notify: Apply netplan
+  notify:
+    - Apply netplan
+    - Generate netplan
+    - Restart systemd-networkd
 
-- name: Disable cloud-init netplan config
+- name: Find old netplan configs
+  ansible.builtin.find:
+    paths: /etc/netplan
+    patterns: '*.yaml'
+    excludes: '01-netcfg.yaml'
+  register: netplan_old
+
+- name: Remove old netplan configs
   ansible.builtin.file:
-    path: /etc/netplan/50-cloud-init.yaml
+    path: "{{ item.path }}" 
     state: absent
-  become: true
+  loop: "{{ netplan_old.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+  notify:
+    - Apply netplan
+    - Generate netplan
+    - Restart systemd-networkd
 
 - name: Ensure CloudStack agent is started
   ansible.builtin.systemd_service:
