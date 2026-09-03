@@ -36,17 +36,12 @@
       --deploy-as=root: -i {{ groups['cloudstack_mgmt'][0] }}
   when: cloudstack_database.stdout | int == 0
   no_log: true
-
-- name: Check if management server is configured
-  ansible.builtin.stat:
-    path: /etc/cloudstack/management/log4j2.xml
-  register: cloudstack_management_started
+  notify: Restart CloudStack management
 
 - name: Start CloudStack management server script
   ansible.builtin.command:
     cmd: cloudstack-setup-management
-    creates: /etc/cloudstack/management/log4j2.xml
-  when: not cloudstack_management_started.stat.exists
+    creates: /var/log/cloudstack/management/setupManagement.log
 
 - name: Enable and start CloudStack management
   ansible.builtin.systemd_service:

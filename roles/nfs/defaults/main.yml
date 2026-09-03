@@ -1,0 +1,5 @@
+---
+nfs_location: /etc/exports
+nfs_exports:
+  - /export/primary
+  - /export/secondary
