@@ -40,6 +40,8 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
     │   └── tasks
     │       └── main.yml
     ├── common
+    │   ├── handlers
+    │   │   └── main.yml
     │   └── tasks
     │       └── main.yml
     ├── kvm_init
@@ -52,6 +54,8 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
     │   └── templates
     │       └── 01-netcfg.yaml.j2
     ├── nfs
+    │   ├── defaults
+    │   │   └── main.yml
     │   ├── handlers
     │   │   └── main.yml
     │   └── tasks
