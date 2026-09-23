@@ -1,0 +1,9 @@
+- name: Bootstrap a Cluster via Cephadm
+  cephadm_bootstrap:
+    mon_ip: {{ ceph_monitor_ip }}
+    dashboard: true
+    monitoring: true
+    initial_dashboard_user: {{ ceph_dashboard_user }}
+    initial_dashboard_password: {{ ceph_dashboard_password }}
+    allow_fqdn_hostname: true
+
