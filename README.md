@@ -26,11 +26,6 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
 │   └── inventory.yml
 ├── LICENSE
 ├── main.yml
-├── playbooks
-│   ├── ceph.yml
-│   ├── kvm.yml
-│   ├── mgmt_server.yml
-│   └── nfs.yml
 ├── README.md
 ├── requirements.yml
 └── roles
@@ -63,6 +58,7 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
     └── repo_init
         └── tasks
             └── main.yml
+
 ```
 ### Instructions
 
