@@ -1,5 +1,32 @@
 ---
-- import_playbook: playbooks/mgmt_server.yml
-- import_playbook: playbooks/kvm.yml
-- import_playbook: playbooks/nfs.yml
-#- import_playbook: playbooks/ceph.yml
+- name: Perform Common Pre-Tasks
+  hosts: all
+  roles:
+    - role: ./roles/common
+      become: true
+
+- name: Add ShapeBlue's Repo
+  hosts:
+    - cloudstack_mgmt
+    - kvm_hosts
+  roles:
+    - role: ./roles/repo_init
+      become: true
+
+- name: Initialize Cloudstack Management Server
+  hosts: cloudstack_mgmt
+  roles:
+    - role: ./roles/apache_mgmt
+      become: true
+
+- name: Initialize Cloudstack Agent
+  hosts: kvm_host
+  roles:
+    - role: ./roles/kvm_init
+      become: true
+
+- name: Initialize Cloudstack Management Server
+  hosts: nfs_server
+  roles:
+    - role: ./roles/nfs
+      become: true
