@@ -1,4 +1,6 @@
 ---
+ceph_mon_allow_even: false # False is recommended for an odd number is ideal for quorum
+
 ceph_dashboard_user: "{{ ansible_user }}"
 
 ceph_dashboard_password: "{{ vault_ceph_dashboard_password }}"
