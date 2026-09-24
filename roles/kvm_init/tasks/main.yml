@@ -13,7 +13,11 @@
 - name: Allow the Ansible user to run the CloudStack agent setup
   ansible.builtin.copy:
     dest: /etc/sudoers.d/99-cloudstack-setup-agent
-    content: "{{ cloudstack_agent_ssh_user }} ALL=NOPASSWD: {{ cloudstack_agent_setup_commands | join(', ') }}\n"
+    content: |
+      {{ cloudstack_agent_ssh_user }} ALL=NOPASSWD: \
+      /usr/bin/cloudstack-setup-agent, \
+      /usr/share/cloudstack-common/scripts/util/keystore-setup, \
+      /usr/share/cloudstack-common/scripts/util/keystore-cert-import
     owner: root
     group: root
     mode: '0440'
