@@ -22,6 +22,7 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
 ├── inventory
 │   ├── group_vars
 │   │   └── all
+│   │       ├── vars.yml
 │   │       └── vault.yml
 │   └── inventory.yml
 ├── LICENSE
@@ -31,6 +32,11 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
 └── roles
     ├── apache_mgmt
     │   ├── handlers
+    │   │   └── main.yml
+    │   └── tasks
+    │       └── main.yml
+    ├── ceph
+    │   ├── defaults
     │   │   └── main.yml
     │   └── tasks
     │       └── main.yml
