@@ -8,3 +8,7 @@ kvm_host:
 nfs_server:
   hosts:
     192.168.1.5:
+ceph_monitor:
+  hosts:
+    192.168.1.5:
+    192.168.1.6:

@@ -1,9 +1,15 @@
 - name: Bootstrap a Cluster via Cephadm
   cephadm_bootstrap:
-    mon_ip: {{ ceph_monitor_ip }}
+    mon_ip: "{{ groups['ceph_monitor'][0] }}" # Bootstrap only takes one monitor IP, rest if applicable added later.
     dashboard: true
     monitoring: true
-    initial_dashboard_user: {{ ceph_dashboard_user }}
-    initial_dashboard_password: {{ ceph_dashboard_password }}
+    initial_dashboard_user: "{{ ceph_dashboard_user }}"
+    initial_dashboard_password: "{{ ceph_dashboard_password }}"
     allow_fqdn_hostname: true
 
+- name: Add remaining monitors
+  ceph_orch_host:
+    name: "{{ hostvars[item].ansible_fqdn }}"
+    address: "{{ item }}"
+    labels: [mon]
+  loop: "{{ groups['ceph_monitor'][1:] }}"
