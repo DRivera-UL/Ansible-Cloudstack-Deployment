@@ -9,6 +9,8 @@ Apache CloudStack 4.22 automated with Ansible. Ansible deploys:
 - Apache Cloudstack Agent
 - KVM Hypervisor (for the agents)
 - NFS
+- MySQL
+- Ceph
 ### Requisites
 
 Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectures.
@@ -87,6 +89,8 @@ The only recommendation I will make is to not deploy the apache management serve
 Modify the inventory file
 
 `vim inventory/inventory.yml`
+
+**NOTE:** You may overlap the same IP with seperate services. Some services probably should be only deployed once (such as the dashboards i.e. Ceph Dashboard and Apache Management. This is outlined in the inventory. However if you wanted to run KVM, CEPH OSD, Ceph Monitor, NFS, and Apache Management on the same server, that is permissible. The inventory should be viewed from a logical topology not a litteral of how many servers you are running either be one or five. It should deploy and function fine. Ceph is only recommended however if you have at least three servers, otherwise it's advisable to leave that blank and the script just will not deploy that service.
 
 Modify the ansible user in ansible.cfg
 
