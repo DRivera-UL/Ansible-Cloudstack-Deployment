@@ -23,7 +23,13 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
 │       └── cloudstack.svg
 ├── inventory
 │   ├── group_vars
-│   │   └── all
+│   │   ├── all
+│   │   │   ├── vars.yml
+│   │   │   └── vault.yml
+│   │   ├── ceph
+│   │   │   ├── vars.yml
+│   │   │   └── vault.yml
+│   │   └── cloudstack_mgmt
 │   │       ├── vars.yml
 │   │       └── vault.yml
 │   └── inventory.yml
@@ -37,16 +43,42 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
     │   │   └── main.yml
     │   └── tasks
     │       └── main.yml
-    ├── ceph
+    ├── ceph_cluster
     │   ├── defaults
     │   │   └── main.yml
-    │   └── tasks
+    │   ├── tasks
+    │   │   └── main.yml
+    │   └── vars
     │       └── main.yml
+    ├── ceph_prereqs
+    │   ├── defaults
+    │   │   └── main.yml
+    │   ├── handlers
+    │   │   └── main.yml
+    │   ├── tasks
+    │   │   └── main.yml
+    │   └── templates
+    │       └── chrony.conf.j2
     ├── common
     │   ├── handlers
     │   │   └── main.yml
     │   └── tasks
     │       └── main.yml
+    ├── groups_quorum_check
+    │   ├── defaults
+    │   │   └── main.yml
+    │   ├── files
+    │   ├── handlers
+    │   │   └── main.yml
+    │   ├── meta
+    │   │   └── main.yml
+    │   ├── README.md
+    │   ├── tasks
+    │   │   └── main.yml
+    │   ├── templates
+    │   └── tests
+    │       ├── inventory
+    │       └── test.yml
     ├── kvm_init
     │   ├── defaults
     │   │   └── main.yml
