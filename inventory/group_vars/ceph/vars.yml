@@ -1,0 +1,2 @@
+---
+ceph_dashboard_password: "{{ vault_ceph_dashboard_password }}"

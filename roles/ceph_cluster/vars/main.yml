@@ -1,0 +1,3 @@
+---
+# Derived from ceph_service_specs; not meant to be overridden.
+_mon_count: "{{ (ceph_service_specs | selectattr('service_type', 'eq', 'mon') | first).placement.count | default(3) }}"

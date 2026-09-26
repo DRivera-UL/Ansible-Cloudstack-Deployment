@@ -2,5 +2,3 @@
 cloudstack_agent_ssh_user: "{{ ansible_user }}" # The user Cloudstack will use to manage the cluster.
 
 cloudstack_guest_cpu_mode: host-model # Default CPU mode, nice for some OSes that kernel panic on the QEMU legacy default.
-
-

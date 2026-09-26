@@ -1,30 +1,23 @@
 ---
-# Defines services, you can mix and match services to the same IPs
-# Just define where the services live and follow the guidance in the
-# inventory for a smooth deployment.
-
-cloudstack_mgmt: # Single hosts
-  hosts: 
-    192.168.1.3:
-kvm_host: # Can be multiple
+all:
   hosts:
-    192.168.1.4:
-nfs_server: # Can be multiple
-  hosts:
-    192.168.1.5:
-ceph:
+    node01: { ansible_host: 192.168.1.3 }
+    node02: { ansible_host: 192.168.1.4 }
+    node03: { ansible_host: 192.168.1.5 }
   children:
-    ceph_mon: # Odd number of host reccommended
+    cloudstack_mgmt:
       hosts:
-        192.168.1.5:
-        192.168.1.6:
-        192.168.1.7:
-    ceph_mgr: # Single host
+        node01:
+    kvm_host:
       hosts:
-        192.168.1.5:
-    ceph_osd: # Should be multiple hosts, ideally at least three
+        node01:
+        node02:
+        node03:
+    nfs_server:
       hosts:
-        192.168.1.5:
-        192.168.1.6:
-        192.168.1.7:
-        192.168.1.8:
+        node01:
+    ceph:
+      hosts:
+        node01:
+        node02:
+        node03:

@@ -1,0 +1,10 @@
+---
+- name: Assert odd member count
+  ansible.builtin.assert:
+    that:
+      - (groups[item] | default([]) | length) is odd
+    fail_msg: "Group '{{ item }}' has {{ groups[item] | default([]) | length }} members; quorum requires an odd number."
+    quiet: true
+  loop: "{{ quorum_groups }}"
+  run_once: true
+  ignore_errors: "{{ not quorum_strict }}"

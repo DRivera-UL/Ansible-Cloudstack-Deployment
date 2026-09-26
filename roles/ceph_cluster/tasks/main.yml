@@ -1,0 +1,77 @@
+---
+- name: Validate inputs
+  ansible.builtin.assert:
+    that:
+      - ceph_dashboard_password | length > 0
+      - ceph_dashboard_password != "CHANGE_ME"
+      - _mon_count | int is odd
+      - groups[ceph_group] | length >= _mon_count | int
+    fail_msg: >-
+      Set ceph_dashboard_password, keep the mon count odd, and have at least
+      that many hosts in '{{ ceph_group }}'.
+    quiet: true
+
+# The module's own skip check looks in /var/lib/ceph, but bootstrap writes
+# ceph.conf to /etc/ceph by default, so guard on that path.
+- name: Check for an existing cluster
+  ansible.builtin.stat:
+    path: /etc/ceph/ceph.conf
+  register: ceph_configuration_file
+
+- name: Bootstrap the cluster
+  ceph.automation.cephadm_bootstrap:
+    mon_ip: "{{ ceph_public_ip | default(ansible_host) }}"
+    image: "{{ ceph_image | default(omit, true) }}"
+    initial_dashboard_user: "{{ ceph_dashboard_user }}"
+    initial_dashboard_password: "{{ ceph_dashboard_password }}"
+    dashboard_password_noupdate: true
+  when: not ceph_configuration_file.stat.exists
+  no_log: "{{ not (ceph_debug | bool) }}"
+
+- name: Read the cephadm SSH public key
+  ansible.builtin.slurp:
+    src: /etc/ceph/ceph.pub
+  register: ceph_public_key
+
+- name: Authorize the cephadm key on every Ceph host
+  ansible.posix.authorized_key:
+    user: root
+    key: "{{ ceph_public_key.content | b64decode }}"
+    state: present
+  delegate_to: "{{ item }}"
+  loop: "{{ groups[ceph_group] }}"
+
+- name: Add hosts to the orchestrator
+  ceph.automation.ceph_orch_host:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    address: "{{ hostvars[item].ceph_public_ip | default(hostvars[item].ansible_host) }}"
+    set_admin_label: "{{ item == groups[ceph_group][0] }}"
+  loop: "{{ groups[ceph_group] }}"
+
+- name: Apply service specs
+  ceph.automation.ceph_orch_apply:
+    spec: "{{ item | to_nice_yaml }}"
+  loop: "{{ ceph_service_specs }}"
+  loop_control:
+    label: "{{ item.service_type }}{{ '.' ~ item.service_id if item.service_id is defined else '' }}"
+
+- name: Wait for monitor quorum
+  ansible.builtin.command:
+    argv: [ceph, quorum_status, -f, json]
+  register: quorum_status
+  until: >-
+    quorum_status.rc == 0 and
+    (quorum_status.stdout | from_json).quorum_names | length == _mon_count | int
+  retries: 30
+  delay: 20
+  changed_when: false
+
+- name: Get cluster status
+  ansible.builtin.command:
+    argv: [ceph, -s]
+  register: cluster_status
+  changed_when: false
+
+- name: Show cluster status
+  ansible.builtin.debug:
+    var: cluster_status.stdout_lines

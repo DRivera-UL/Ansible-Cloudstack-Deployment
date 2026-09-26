@@ -1,0 +1,40 @@
+---
+- name: Require Ubuntu 26.04
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution == "Ubuntu"
+      - ansible_distribution_version == "26.04"
+    fail_msg: "This repo targets Ubuntu 26.04; found {{ ansible_distribution }} {{ ansible_distribution_version }}."
+    quiet: true
+
+- name: Set hostname from inventory name
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname_short }}"
+  when: ceph_set_hostname | bool
+
+- name: Install packages
+  ansible.builtin.apt:
+    name:
+      - podman
+      - lvm2
+      - chrony
+      - python3
+      - cephadm
+      - ceph-common
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Configure chrony servers
+  ansible.builtin.template:
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    mode: "0644"
+  when: ntp_servers | length > 0
+  notify: Restart chrony
+
+- name: Enable and start chrony
+  ansible.builtin.service:
+    name: chrony
+    state: started
+    enabled: true

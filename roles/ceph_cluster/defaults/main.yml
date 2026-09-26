@@ -1,0 +1,28 @@
+---
+ceph_group: ceph
+
+# Container image for the cluster daemons. Empty = the version matching the
+# installed cephadm package. Pin a newer point release here, e.g.
+# "quay.io/ceph/ceph:v20.2.4".
+ceph_image: ""
+
+ceph_dashboard_user: admin
+ceph_dashboard_password: ""
+ceph_debug: false   # true = show bootstrap output (includes the password)
+
+# Ceph picks placement. The whole list is replaced if you override it,
+# so include every service.
+ceph_service_specs:
+  - service_type: mon
+    placement:
+      count: 3
+  - service_type: mgr
+    placement:
+      count: 2
+  - service_type: osd
+    service_id: all_available
+    placement:
+      host_pattern: "*"
+    spec:
+      data_devices:
+        all: true

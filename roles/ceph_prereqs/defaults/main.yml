@@ -1,0 +1,3 @@
+---
+ceph_set_hostname: true
+ntp_servers: []

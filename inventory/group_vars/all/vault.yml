@@ -1,7 +1,3 @@
 ---
-ansible_password: changeme
-ansible_become_pass: changeme
-mysql_root_password: changeme
-cloud_db_password: changeme
-
-vault_ceph_dashboard_password: changeme
+vault_ansible_password: changeme
+vault_ansible_become_pass: changeme

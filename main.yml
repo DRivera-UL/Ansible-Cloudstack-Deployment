@@ -8,7 +8,7 @@
 - name: Add ShapeBlue's Repo
   hosts:
     - cloudstack_mgmt
-    - kvm_hosts
+    - kvm_host
   roles:
     - role: ./roles/repo_init
       become: true

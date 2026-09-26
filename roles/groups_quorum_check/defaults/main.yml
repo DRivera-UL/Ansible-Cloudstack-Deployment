@@ -1,0 +1,3 @@
+---
+quorum_groups: []  # List inventory items that you wish to be quorum.
+quorum_strict: true   # 'true' will fail the task if not quorum, 'false' will ignore but warn.
