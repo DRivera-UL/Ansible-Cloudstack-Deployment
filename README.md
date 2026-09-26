@@ -100,29 +100,76 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
             └── main.yml
 
 ```
-### Instructions
+## Instructions
+
+### Preperation
 
 First pull the repo down.
 
 `git clone https://github.com/DRivera-UL/Ansible-Cloudstack-Deployment`
 
-Encrypt the vault.yml secret.
+`cd Ansible-Cloudstack-Deployment`
 
-`ansible-vault encrypt ./Ansible-Cloudstack-Deployment/inventory/group_vars/all/vault.yml`
+Batched edit and then encrypt the **all** vault.yml secret.
 
-Change the passwords
+### Initial Password Managment
 
-`ansible-vault edit vault.yml`
+`vim -p inventory/group_vars/*/vault.yml`
 
-Edit the inventory file. All services are agnostic and *may* be ran on seperate devices or all on once device.
+`ansible-vault encrypt inventory/group_vars/*/vault.yml`
 
-The only recommendation I will make is to not deploy the apache management server to multiple devices as the script is not designed to loadbalance MySQL servers *at the moment* however feel free to expirement with multiple KVMs or NFS servers as you wish.
+### Inventory Management
 
-Modify the inventory file
+Edit the inventory file.
 
-`vim inventory/inventory.yml`
+`vim -p inventory/inventory.yml`
 
-**NOTE:** You may overlap the same IP with seperate services. Some services probably should be only deployed once (such as the dashboards i.e. Ceph Dashboard and Apache Management. This is outlined in the inventory. However if you wanted to run KVM, CEPH OSD, Ceph Monitor, NFS, and Apache Management on the same server, that is permissible. The inventory should be viewed from a logical topology not a litteral of how many servers you are running either be one or five. It should deploy and function fine. Ceph is only recommended however if you have at least three servers, otherwise it's advisable to leave that blank and the script just will not deploy that service.
+*example inventory file*
+```
+   1 │ ---
+   2 │ all:
+   3 │   hosts:
+   4 │     node01: { ansible_host: 192.168.1.3 }
+   5 │     node02: { ansible_host: 192.168.1.4 }
+   6 │     node03: { ansible_host: 192.168.1.5 }
+   7 │   children:
+   8 │     cloudstack_mgmt:
+   9 │       hosts:
+  10 │         node01:
+  11 │     kvm_host:
+  12 │       hosts:
+  13 │         node01:
+  14 │         node02:
+  15 │         node03:
+  16 │     nfs_server:
+  17 │       hosts:
+  18 │         node01:
+  19 │     ceph:
+  20 │       hosts:
+  21 │         node01:
+  22 │         node02:
+  23 │         node03:
+```
+
+#### All hosts in cluster instructions
+
+Under all hosts please dicated the hostname and IP of the remote system. This playbook will modify the hostname of the system as Ceph requires a unique hostname for the CRUSH map. In the example above "node1", "node2", and "node3" will be the hostname that is pushed to the respective remote systems 192.168.1.3-5. You should not change the hostname later as Ceph design is dependant on the hostname.
+
+#### Cloudstack Management Group
+
+Now with the newly defined hostnames under the "cloudstack_mgmt" group under "hosts" import the hostname followed by a ":". This playbook is designed to have one management server at the moment since the SQL backend is tied to that role. Please assign one device to serve as the managment service (front end web UI and SQL backend) for the Cloudstack management cluster.
+
+#### KVM Host Group
+
+This is where the VMs will be hosted using KVM. You are free to have this deploy to the management server as well if you wish to have a server manage and virtualize to itself rather than a dedicated managment server. This is not unusual for small clusters. For example, node01 can server as a Ceph OSD, NFS server, KVM host and CloudStack management host if you wish.
+
+#### NFS Server Group
+
+If you are not bringing your own storage solution pick the servers that will serve your secondary storage (needed to ISOs, QCOW2 templates, etc.) for the cluster. NFS can also serve as the primary storage too and the defaults will deploy two NFS exports "(IP of hosts)/exports/primary" and "(IP of hosts)/exports/secondary".
+
+### Ceph Group
+
+The design in this playbook is to let Cephadm determine which hosts will run the Admin, Mgr, and Mon but all hosts here will pull all available devices into the Ceph crush map. Ideally you have at least three identical server with drives of the same size and quantity on each server, but most importantly each server minimally is running the same blank drive space on each one. If you have a lopsided server with more drives than another *Ceph will accept it* but the storage pool might not utilize all drives added depending on the replication settings and the storage space of the smallest server. For simplicity, please try to provide servers with the same unallocated storage size and per Ceph recommendations at least three servers for block storage.
 
 Modify the ansible user in ansible.cfg
 
