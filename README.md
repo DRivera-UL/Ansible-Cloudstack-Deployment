@@ -153,7 +153,7 @@ Edit the inventory file.
 
 #### All hosts in cluster instructions
 
-Under all hosts please dicated the hostname and IP of the remote system. This playbook will modify the hostname of the system as Ceph requires a unique hostname for the CRUSH map. In the example above "node1", "node2", and "node3" will be the hostname that is pushed to the respective remote systems 192.168.1.3-5. You should not change the hostname later as Ceph design is dependant on the hostname.
+Under all hosts please dicated the hostname and IP of the remote system. This playbook will modify the hostname of the system as Ceph requires a unique hostname for the CRUSH map. In the example above "node01", "node02", and "node03" will be the hostname that is pushed to the respective remote systems 192.168.1.3-5. You should not change the hostname later as Ceph design is dependant on the hostname.
 
 #### Cloudstack Management Group
 
@@ -167,9 +167,9 @@ This is where the VMs will be hosted using KVM. You are free to have this deploy
 
 If you are not bringing your own storage solution pick the servers that will serve your secondary storage (needed to ISOs, QCOW2 templates, etc.) for the cluster. NFS can also serve as the primary storage too and the defaults will deploy two NFS exports "(IP of hosts)/exports/primary" and "(IP of hosts)/exports/secondary".
 
-### Ceph Group
+#### Ceph Group
 
-The design in this playbook is to let Cephadm determine which hosts will run the Admin, Mgr, and Mon but all hosts here will pull all available devices into the Ceph crush map. Ideally you have at least three identical server with drives of the same size and quantity on each server, but most importantly each server minimally is running the same blank drive space on each one. If you have a lopsided server with more drives than another *Ceph will accept it* but the storage pool might not utilize all drives added depending on the replication settings and the storage space of the smallest server. For simplicity, please try to provide servers with the same unallocated storage size and per Ceph recommendations at least three servers for block storage.
+The design in this playbook is to let Cephadm determine which hosts will run the Admin, Mgr, and Mon but ***all hosts here will pull all available devices (any unused disk) into the Ceph crush map***. Ideally you have at least three identical server with drives of the same size and quantity on each server, but most importantly each server minimally is running the same blank drive space on each one. If you have a lopsided server with more drives than another *Ceph will accept it* but the storage pool might not utilize all drives added depending on the replication settings and the storage space of the smallest server. For simplicity, please try to provide servers with the same unallocated storage size and per Ceph recommendations at least three servers for block storage.
 
 Modify the ansible user in ansible.cfg
 
