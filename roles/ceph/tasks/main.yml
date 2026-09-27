@@ -1,0 +1,6 @@
+--- 
+- name: Prerequisites for Ceph
+  ansible.builtin.include_tasks: ceph_prereqs.yml
+
+- name: Ceph Cluster
+  ansible.builtin.include_tasks: ceph_cluster.yml

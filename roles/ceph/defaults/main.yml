@@ -1,5 +1,8 @@
 ---
-ceph_group: ceph
+ceph_set_hostname: true
+ntp_servers: []
+
+ceph_group: ceph  # Name of the inventory group here.
 
 # Container image for the cluster daemons. Empty = the version matching the
 # installed cephadm package. Pin a newer point release here, e.g.
