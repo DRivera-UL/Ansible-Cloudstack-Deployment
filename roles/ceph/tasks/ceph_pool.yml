@@ -1,0 +1,10 @@
+---
+- name: Pool creation
+  ceph_pool:
+    name: "{{ item.name }}"
+    state: present
+    size: "{{ item.size }}"
+    application: "{{ item.application }}"
+    pool_type: "{{ item.pool_type }}"
+    pg_autoscale_mode: "{{ item.pg_autoscale_mode }}"
+  with_items: "{{ pools }}"
