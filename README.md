@@ -24,14 +24,8 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
 ├── inventory
 │   ├── group_vars
 │   │   ├── all
-│   │   │   ├── vars.yml
-│   │   │   └── vault.yml
 │   │   ├── ceph
-│   │   │   ├── vars.yml
-│   │   │   └── vault.yml
 │   │   └── cloudstack_mgmt
-│   │       ├── vars.yml
-│   │       └── vault.yml
 │   └── inventory.yml
 ├── LICENSE
 ├── main.yml
@@ -40,64 +34,36 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
 └── roles
     ├── apache_mgmt
     │   ├── handlers
-    │   │   └── main.yml
     │   └── tasks
-    │       └── main.yml
-    ├── ceph_cluster
+    ├── ceph
     │   ├── defaults
-    │   │   └── main.yml
-    │   ├── tasks
-    │   │   └── main.yml
-    │   └── vars
-    │       └── main.yml
-    ├── ceph_prereqs
-    │   ├── defaults
-    │   │   └── main.yml
     │   ├── handlers
-    │   │   └── main.yml
+    │   ├── main.yml
     │   ├── tasks
-    │   │   └── main.yml
     │   └── templates
-    │       └── chrony.conf.j2
     ├── common
     │   ├── handlers
-    │   │   └── main.yml
     │   └── tasks
-    │       └── main.yml
     ├── groups_quorum_check
     │   ├── defaults
-    │   │   └── main.yml
     │   ├── files
     │   ├── handlers
-    │   │   └── main.yml
     │   ├── meta
-    │   │   └── main.yml
     │   ├── README.md
     │   ├── tasks
-    │   │   └── main.yml
     │   ├── templates
     │   └── tests
-    │       ├── inventory
-    │       └── test.yml
     ├── kvm_init
     │   ├── defaults
-    │   │   └── main.yml
     │   ├── handlers
-    │   │   └── main.yml
     │   ├── tasks
-    │   │   └── main.yml
     │   └── templates
-    │       └── 01-netcfg.yaml.j2
     ├── nfs
     │   ├── defaults
-    │   │   └── main.yml
     │   ├── handlers
-    │   │   └── main.yml
     │   └── tasks
-    │       └── main.yml
     └── repo_init
         └── tasks
-            └── main.yml
 
 ```
 ## Instructions
