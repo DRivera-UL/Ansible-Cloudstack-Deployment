@@ -13,7 +13,8 @@ Apache CloudStack 4.22 automated with Ansible. Ansible deploys:
 - Ceph
 ### Requisites
 
-Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectures.
+Currently tested with Ubuntu Server 26.04 LTS **(Regular, not minimal.)** 
+
 ### Repo Layout
 ```
 .
@@ -38,21 +39,16 @@ Currently tested with Ubuntu Server 26.04 LTS. Works with ARM and x86 architectu
     ├── ceph
     │   ├── defaults
     │   ├── handlers
-    │   ├── main.yml
+    │   ├── README.md
     │   ├── tasks
-    │   └── templates
+    │   ├── templates
+    │   └── vars
     ├── common
     │   ├── handlers
     │   └── tasks
     ├── groups_quorum_check
-    │   ├── defaults
     │   ├── files
-    │   ├── handlers
-    │   ├── meta
-    │   ├── README.md
-    │   ├── tasks
-    │   ├── templates
-    │   └── tests
+    │   └── templates
     ├── kvm_init
     │   ├── defaults
     │   ├── handlers
