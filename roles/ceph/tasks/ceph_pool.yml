@@ -1,6 +1,6 @@
 ---
 - name: Pool creation
-  ceph_pool:
+  ceph.automation.ceph_pool:
     name: "{{ item.name }}"
     state: present
     size: "{{ item.size }}"

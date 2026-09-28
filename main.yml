@@ -30,3 +30,9 @@
   roles:
     - role: ./roles/nfs
       become: true
+
+- name: Deploy Ceph
+  hosts: ceph
+  roles:
+    - role: ./roles/ceph
+      become: true

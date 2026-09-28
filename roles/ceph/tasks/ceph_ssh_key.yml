@@ -1,0 +1,11 @@
+---
+- name: Read the cephadm SSH public key
+  ansible.builtin.slurp:
+    src: /etc/ceph/ceph.pub
+  register: ceph_public_key
+
+- name: Authorize the cephadm key
+  ansible.posix.authorized_key:
+    user: root
+    key: "{{ hostvars[ceph_bootstrap_host].ceph_public_key.content | b64decode }}"
+    state: present

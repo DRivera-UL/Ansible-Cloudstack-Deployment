@@ -14,7 +14,7 @@
 #    mode: '0644'
 
 - name: Add ShapeBlue's CloudStack repository
-  ansible.builtin.apt_repository:
+  ansible.builtin.deb822_repository:
     repo: "deb [signed-by=/etc/apt/keyrings/cloudstack.asc] http://packages.shapeblue.com/cloudstack/upstream/debian/4.22 /"
     filename: cloudstack
     state: present
