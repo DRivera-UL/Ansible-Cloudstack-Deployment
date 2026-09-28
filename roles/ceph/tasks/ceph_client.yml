@@ -7,13 +7,13 @@
       mon: "profile rbd"
       osd: "profile rbd pool={{ ceph_pool_name }}"
     import_key: true
-    dest: /etc/ceph/ceph.client.cloudstack.keyring
+    dest: /etc/ceph/ceph.client.{{ ceph_pool_user }}.keyring
     owner: root
     group: root
     mode: "0600"
 
 - name: Get the bare secret for CloudStack
-    ansible.builtin.command: ceph auth get-key client.cloudstack
-    register: ceph_key_secret
-    changed_when: false
-    no_log: true
+  ansible.builtin.command: ceph auth get-key client.{{ ceph_pool_user }}
+  register: ceph_key_secret
+  changed_when: false
+  no_log: true
