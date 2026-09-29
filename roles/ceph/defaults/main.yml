@@ -5,10 +5,8 @@ ntp_servers: []
 ceph_group: ceph  # Name of the inventory group here.
 ceph_bootstrap_host: "{{ groups[ceph_group] | first }}"  # Runs bootstrap and the orchestrator on the first listed inventory Ceph server.
 
-# Container image for the cluster daemons. Empty = the version matching the
-# installed cephadm package. Pin a newer point release here, e.g.
-# "quay.io/ceph/ceph:v20.2.4".
-ceph_image: ""
+#  Empty "" = the version matching the installed cephadm package.
+ceph_image: "quay.io/ceph/ceph:v20.2.4"
 
 ceph_dashboard_user: admin
 ceph_dashboard_password: ""

@@ -15,10 +15,22 @@
 
 - name: Get cluster status
   ansible.builtin.command:
-    argv: [ceph, -s]
+    argv: [cephadm, shell, --, ceph, -s]
   register: cluster_status
   changed_when: false
 
 - name: Show cluster status
   ansible.builtin.debug:
     var: cluster_status.stdout_lines
+
+- name: Find the image the cluster runs
+  ansible.builtin.command:
+    argv: [cephadm, ls]
+  register: cephadm_daemons
+  changed_when: false
+
+- name: Remember it for the ceph.automation modules
+  ansible.builtin.set_fact:
+    ceph_running_image: >-
+      {{ (cephadm_daemons.stdout | from_json
+          | selectattr('name', 'match', '^mon\.') | first).container_image_name }}

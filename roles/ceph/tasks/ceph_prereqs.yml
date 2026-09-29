@@ -12,6 +12,22 @@
     name: "{{ inventory_hostname_short }}"
   when: ceph_set_hostname | bool
 
+- name: Create the ceph group
+  ansible.builtin.group:
+    name: ceph
+    gid: 167
+    system: true
+
+- name: Create the ceph user
+  ansible.builtin.user:
+    name: ceph
+    uid: 167
+    group: ceph
+    system: true
+    shell: /usr/sbin/nologin
+    home: /var/lib/ceph
+    create_home: false
+
 - name: Install packages
   ansible.builtin.apt:
     name:

@@ -8,3 +8,6 @@
     pool_type: "{{ item.pool_type }}"
     pg_autoscale_mode: "{{ item.pg_autoscale_mode }}"
   with_items: "{{ pools }}"
+  environment:
+    CEPH_CONTAINER_BINARY: podman
+    CEPH_CONTAINER_IMAGE: "{{ ceph_running_image }}"

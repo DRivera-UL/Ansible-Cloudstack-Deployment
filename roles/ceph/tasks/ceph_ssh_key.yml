@@ -3,6 +3,9 @@
   ansible.builtin.slurp:
     src: /etc/ceph/ceph.pub
   register: ceph_public_key
+  run_once: true
+  delegate_to: "{{ ceph_bootstrap_host }}"
+
 
 - name: Authorize the cephadm key
   ansible.posix.authorized_key:
