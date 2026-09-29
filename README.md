@@ -26,7 +26,9 @@ Currently tested with Ubuntu Server 26.04 LTS **(Regular, not minimal.)**
 │   ├── group_vars
 │   │   ├── all
 │   │   ├── ceph
-│   │   └── cloudstack_mgmt
+│   │   ├── cloudstack_mgmt
+│   │   ├── kvm_host
+│   │   └── nfs_server
 │   └── inventory.yml
 ├── LICENSE
 ├── main.yml
@@ -46,9 +48,6 @@ Currently tested with Ubuntu Server 26.04 LTS **(Regular, not minimal.)**
     ├── common
     │   ├── handlers
     │   └── tasks
-    ├── groups_quorum_check
-    │   ├── files
-    │   └── templates
     ├── kvm_init
     │   ├── defaults
     │   ├── handlers
@@ -62,11 +61,6 @@ Currently tested with Ubuntu Server 26.04 LTS **(Regular, not minimal.)**
         └── tasks
 
 ```
-## Instructions
-
-### Preperation
-
-First pull the repo down.
 
 `git clone https://github.com/DRivera-UL/Ansible-Cloudstack-Deployment`
 
