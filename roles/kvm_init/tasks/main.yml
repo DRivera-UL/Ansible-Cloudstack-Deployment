@@ -13,7 +13,11 @@
 - name: Allow the Ansible user to run the CloudStack agent setup
   ansible.builtin.copy:
     dest: /etc/sudoers.d/99-cloudstack-setup-agent
-    content: "{{ cloudstack_agent_ssh_user }} ALL=NOPASSWD: {{ cloudstack_agent_setup_commands | join(', ') }}\n"
+    content: |
+      {{ cloudstack_agent_ssh_user }} ALL=NOPASSWD: \
+      /usr/bin/cloudstack-setup-agent, \
+      /usr/share/cloudstack-common/scripts/util/keystore-setup, \
+      /usr/share/cloudstack-common/scripts/util/keystore-cert-import
     owner: root
     group: root
     mode: '0440'
@@ -38,7 +42,7 @@
   when: ansible_facts['architecture'] == 'aarch64'
   notify: Restart cloudstack-agent
 
-- name: Enable the console proxy on QEMU 
+- name: Enable the console proxy on QEMU
   ansible.builtin.blockinfile:
     path: /etc/libvirt/qemu.conf
     marker: "# {mark} VNC permissive listen"
@@ -46,7 +50,7 @@
       vnc_listen = "0.0.0.0"
   notify: Restart libvirt
 
-- name: Mask the socket-based listeners  
+- name: Mask the socket-based listeners
   ansible.builtin.systemd_service:
     name: "{{ item }}"
     masked: true
@@ -108,7 +112,7 @@
 
 - name: Remove old netplan configs
   ansible.builtin.file:
-    path: "{{ item.path }}" 
+    path: "{{ item.path }}"
     state: absent
   loop: "{{ netplan_old.files }}"
   loop_control:

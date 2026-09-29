@@ -36,6 +36,17 @@
     - '32803' # lockd
     - '5900:6100' # VNC
     - '49152:49216' # migration between KVM
+    - '3300' # ceph mon msgr2
+    - '6789' # ceph mon msgr1
+    - '6800:7300' # ceph osd/mgr/mds
+    - '8443' # ceph dashboard
+    - '9283' # ceph mgr prometheus exporter
+    - '9095' # ceph prometheus
+    - '3000' # ceph grafana
+    - '9093' # ceph alertmanager
+    - '9094' # ceph alertmanager cluster
+    - '9100' # ceph node-exporter
+    - '8765' # cephadm agent/registry
   notify: Reload UFW
 
 - name: Allow firewall ports (UDP)

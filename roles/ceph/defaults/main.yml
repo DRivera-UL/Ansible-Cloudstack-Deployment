@@ -1,0 +1,38 @@
+---
+ceph_set_hostname: true
+ntp_servers: []
+
+ceph_group: ceph  # Name of the inventory group here.
+ceph_bootstrap_host: "{{ groups[ceph_group] | first }}"  # Runs bootstrap and the orchestrator on the first listed inventory Ceph server.
+
+#  Empty "" = the version matching the installed cephadm package.
+ceph_image: "quay.io/ceph/ceph:v20.2.4"
+
+ceph_dashboard_user: admin
+ceph_dashboard_password: ""
+
+# Ceph picks placement. The whole list is replaced if you override it,
+# so include every service.
+ceph_service_specs:
+  - service_type: mon
+    placement:
+      count: 3
+  - service_type: mgr
+    placement:
+      count: 2
+  - service_type: osd
+    service_id: all_available
+    placement:
+      host_pattern: "*"
+    spec:
+      data_devices:
+        all: true
+
+pools:
+  - name: cephpool
+    size: 3
+    application: rbd # Or set it to "rgw" or "cephfs"
+    pool_type: replicated
+    pg_autoscale_mode: "on"
+
+ceph_pool_user: ceph_user

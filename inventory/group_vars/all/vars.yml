@@ -1,0 +1,7 @@
+---
+ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+
+ansible_password: "{{ vault_ansible_password }}"
+ansible_become_pass: "{{ vault_ansible_become_pass }}"

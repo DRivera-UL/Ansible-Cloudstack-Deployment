@@ -1,0 +1,22 @@
+---
+- name: Create client.{{ ceph_pool_user }}
+  ceph.automation.ceph_key:
+    name: client.{{ ceph_pool_user }}
+    state: present
+    caps:
+      mon: "profile rbd"
+      osd: "profile rbd pool={{ ceph_pool_name }}"
+    import_key: true
+    dest: /etc/ceph/ceph.client.{{ ceph_pool_user }}.keyring
+    owner: root
+    group: root
+    mode: "0600"
+  environment:
+    CEPH_CONTAINER_BINARY: podman
+    CEPH_CONTAINER_IMAGE: "{{ ceph_running_image }}"
+
+- name: Get the bare secret for CloudStack
+  ansible.builtin.command: cephadm shell -- ceph auth get-key client.{{ ceph_pool_user }}
+  register: ceph_key_secret
+  changed_when: false
+  no_log: true

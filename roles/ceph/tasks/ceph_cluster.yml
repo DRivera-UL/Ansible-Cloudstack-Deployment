@@ -1,0 +1,36 @@
+---
+- name: Add hosts to the orchestrator
+  ceph.automation.ceph_orch_host:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    address: "{{ hostvars[item].ceph_public_ip | default(hostvars[item].ansible_host) }}"
+    set_admin_label: "{{ item == ceph_bootstrap_host }}"
+  loop: "{{ groups[ceph_group] }}"
+
+- name: Apply service specs
+  ceph.automation.ceph_orch_apply:
+    spec: "{{ item | to_nice_yaml }}"
+  loop: "{{ ceph_service_specs }}"
+  loop_control:
+    label: "{{ item.service_type }}{{ '.' ~ item.service_id if item.service_id is defined else '' }}"
+
+- name: Get cluster status
+  ansible.builtin.command:
+    argv: [cephadm, shell, --, ceph, -s]
+  register: cluster_status
+  changed_when: false
+
+- name: Show cluster status
+  ansible.builtin.debug:
+    var: cluster_status.stdout_lines
+
+- name: Find the image the cluster runs
+  ansible.builtin.command:
+    argv: [cephadm, ls]
+  register: cephadm_daemons
+  changed_when: false
+
+- name: Remember it for the ceph.automation modules
+  ansible.builtin.set_fact:
+    ceph_running_image: >-
+      {{ (cephadm_daemons.stdout | from_json
+          | selectattr('name', 'match', '^mon\.') | first).container_image_name }}

@@ -1,0 +1,6 @@
+---
+# Checks the value set for mon: in ceph_service_specs: in the defaults file.
+ceph_mon_spec: "{{ ceph_service_specs | selectattr('service_type', 'eq', 'mon') | first }}"
+
+# Checks the value set for name: in pools: in the defaults file.
+ceph_pool_name: "{{ pools | map(attribute='name') | first }}"

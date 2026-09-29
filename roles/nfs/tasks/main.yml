@@ -10,11 +10,11 @@
 
 - name: Configure NFS export properties
   ansible.builtin.blockinfile:
-    path: /etc/exports
+    path: "{{ nfs_location }}"
     marker: "# {mark} Configuration for NFS Exports"
     block: /export  *(rw,async,no_root_squash,no_subtree_check)
   notify: Restart NFS
-  
+
 - name: Configure NFS kernel server
   ansible.builtin.blockinfile:
     path: /etc/default/nfs-kernel-server
@@ -45,6 +45,4 @@
     owner: root
     group: root
     mode: '0755'
-  loop:
-    - /export/primary
-    - /export/secondary
+  loop: "{{ nfs_exports }}"

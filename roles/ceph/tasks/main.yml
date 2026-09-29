@@ -1,0 +1,22 @@
+---
+- name: Install Ceph prerequisites
+  ansible.builtin.import_tasks: ceph_prereqs.yml
+
+- name: Bootstrap the cluster
+  ansible.builtin.include_tasks: ceph_bootstrap.yml
+  when: inventory_hostname == ceph_bootstrap_host
+
+- name: Trust the cephadm SSH key
+  ansible.builtin.import_tasks: ceph_ssh_key.yml
+
+- name: Add hosts and deploy services
+  ansible.builtin.include_tasks: ceph_cluster.yml
+  when: inventory_hostname == ceph_bootstrap_host
+
+- name: Create the pools
+  ansible.builtin.include_tasks: ceph_pool.yml
+  when: inventory_hostname == ceph_bootstrap_host
+
+- name: Create the CloudStack client keyring
+  ansible.builtin.include_tasks: ceph_client.yml
+  when: inventory_hostname == ceph_bootstrap_host
