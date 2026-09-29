@@ -1,9 +1,9 @@
 ---
 all:
   hosts:
-    node01: { ansible_host: 192.168.1.163 }
-    node02: { ansible_host: 192.168.1.164 }
-    node03: { ansible_host: 192.168.1.162 }
+    node01: { ansible_host: 192.168.1.100 }
+    node02: { ansible_host: 192.168.1.101 }
+    node03: { ansible_host: 192.168.1.102 }
   children:
     cloudstack_mgmt:
       hosts:

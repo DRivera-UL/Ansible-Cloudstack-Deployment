@@ -6,11 +6,11 @@
 
 Apache CloudStack 4.22 automated with Ansible. Ansible deploys:
 - Apache Cloudstack Management Server
-- Apache Cloudstack Agent
-- KVM Hypervisor (for the agents)
+- Apache Cloudstack Agent (Agent + KVM)
 - NFS
 - MySQL
 - Ceph
+
 ### Requisites
 
 Currently tested with Ubuntu Server 26.04 LTS **(Regular, not minimal.)** 
