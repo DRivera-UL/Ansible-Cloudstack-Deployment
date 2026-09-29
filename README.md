@@ -13,7 +13,9 @@ Apache CloudStack 4.22 automated with Ansible. Ansible deploys:
 
 ### Requisites
 
-Currently tested with Ubuntu Server 26.04 LTS **(Regular, not minimal.)** 
+**Requires** Ubuntu Server 26.04 LTS **(Regular, not minimal.)** 
+
+KVM and package management is done with 26.04 in mind for the moment.
 
 ### Repo Layout
 ```
